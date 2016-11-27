@@ -90,12 +90,13 @@ for i in range(3):
     Yenemy.move_random()
     Yenemies.append(Yenemy)
     
-items = []
-items.append(Item("boxes/1.png", [random.randrange(10, 710), random.randrange(30, 460)], "helmet"))
-items.append(Item("boxes/2.png", [random.randrange(10, 710), random.randrange(30, 460)], "chestplate"))
-items.append(Item("boxes/3.png", [random.randrange(10, 710), random.randrange(30, 460)], "necklace"))
-items.append(Item("boxes/4.png", [random.randrange(10, 710), random.randrange(30, 460)], "leggings"))
-items.append(Item("boxes/5.png", [random.randrange(10, 710), random.randrange(30, 460)], "watch"))
+items = [
+Item("boxes/1.png", [random.randrange(10, 710), random.randrange(30, 460)], "helmet")
+Item("boxes/2.png", [random.randrange(10, 710), random.randrange(30, 460)], "chestplate")
+Item("boxes/3.png", [random.randrange(10, 710), random.randrange(30, 460)], "necklace")
+Item("boxes/4.png", [random.randrange(10, 710), random.randrange(30, 460)], "leggings")
+Item("boxes/5.png", [random.randrange(10, 710), random.randrange(30, 460)], "watch")
+]
 
 
 while not done:
