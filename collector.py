@@ -49,7 +49,7 @@ class Thing:
         self.position[1] = random.randrange(30, 460)
         
 class Item(Thing):
-    def __init__(self, picture, pos, name):
+    def __init__(self, picture, name, pos=[0,0]):
         Thing.__init__(self, picture, pos)
         self.name = name
 
@@ -89,14 +89,15 @@ for i in range(3):
     Yenemy = Thing("other/3.png", [0, 0])
     Yenemy.move_random()
     Yenemies.append(Yenemy)
-    
-items = [
-Item("boxes/1.png", [random.randrange(10, 710), random.randrange(30, 460)], "helmet")
-Item("boxes/2.png", [random.randrange(10, 710), random.randrange(30, 460)], "chestplate")
-Item("boxes/3.png", [random.randrange(10, 710), random.randrange(30, 460)], "necklace")
-Item("boxes/4.png", [random.randrange(10, 710), random.randrange(30, 460)], "leggings")
-Item("boxes/5.png", [random.randrange(10, 710), random.randrange(30, 460)], "watch")
-]
+
+
+# Takes item_names in list and loads into Item list
+item_names = ["helmet", "chestplate", "necklace", "leggings", "watch"]
+items = [Item("boxes/{0}.png".format(item_name), item_name) for item_name in item_names]
+
+# Move them around randomly
+for item in items:
+    item.move_random()
 
 
 while not done:
