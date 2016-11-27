@@ -34,7 +34,7 @@ class Thing:
         self.position = pos
         
     def draw(self, screen):
-        screen.blit(self.texture, tuple([int(e) for e in self.position]))
+        screen.blit(self.texture, self.position)
 
     def iscolliding(self, other):
         size = self.texture.get_size()
@@ -45,8 +45,7 @@ class Thing:
         return False
 
     def move_random(self):
-        self.position[0] = random.randrange(10, 710)
-        self.position[1] = random.randrange(30, 460)
+        self.position = [random.randrange(10, 710), random.randrange(30, 460)]
         
 class Item(Thing):
     def __init__(self, picture, name, pos=[0,0]):
