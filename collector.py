@@ -11,9 +11,6 @@ myfont = pygame.font.SysFont("mirc", 25)
 screen = pygame.display.set_mode((720, 480))
 clock = pygame.time.Clock()
 
-health = 10
-defence = 0
-damage = 1  #Don't know the math to make defence actualy do something
 seconds = 0
 speed = 2
 Yspeed = speed*1.7
@@ -29,7 +26,7 @@ pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 done = False
 black = (0, 0, 0)
 
-keys = {"w":False, "a":False, "s":False, "d":False, " ":False}
+keys = {"w":False, "a":False, "s":False, "d":False, " ":False, "q":False}
 
 class Thing:
     def __init__(self, picture, pos):
@@ -61,8 +58,11 @@ class Item(Thing):
 
 
 class Player(Thing):
-    def __init__(self, picture, pos):
+    def __init__(self, picture, pos, health=10, defence=1, damage=5):
         Thing.__init__(self, picture, pos)
+        self.health = health
+        self.defence = defence
+        self.damage = damage
         self.items = []
 
     def move(self, direction, distance):
@@ -75,26 +75,27 @@ class Player(Thing):
         elif direction == "LEFT":
             self.position[0] -= distance
 
-player = Player("2.png", [360, 240])
+
+player = Player("other/2.png", [360, 240])
 
 enemies = []
 Yenemies = []
 for e in range(10):
-    enemy = Thing("1.png", [0, 0])
+    enemy = Thing("other/1.png", [0, 0])
     enemy.move_random()
     enemies.append(enemy)
 
 for i in range(3):
-    Yenemy = Thing("1(2).png", [0, 0])
+    Yenemy = Thing("other/3.png", [0, 0])
     Yenemy.move_random()
     Yenemies.append(Yenemy)
     
 items = []
-items.append(Item("box(1).png", [random.randrange(10, 710), random.randrange(30, 460)], "helmet"))
-items.append(Item("box(2).png", [random.randrange(10, 710), random.randrange(30, 460)], "chestplate"))
-items.append(Item("box(3).png", [random.randrange(10, 710), random.randrange(30, 460)], "necklace"))
-items.append(Item("box(4).png", [random.randrange(10, 710), random.randrange(30, 460)], "leggings"))
-items.append(Item("box(5).png", [random.randrange(10, 710), random.randrange(30, 460)], "watch"))
+items.append(Item("boxes/1.png", [random.randrange(10, 710), random.randrange(30, 460)], "helmet"))
+items.append(Item("boxes/2.png", [random.randrange(10, 710), random.randrange(30, 460)], "chestplate"))
+items.append(Item("boxes/3.png", [random.randrange(10, 710), random.randrange(30, 460)], "necklace"))
+items.append(Item("boxes/4.png", [random.randrange(10, 710), random.randrange(30, 460)], "leggings"))
+items.append(Item("boxes/5.png", [random.randrange(10, 710), random.randrange(30, 460)], "watch"))
 
 
 while not done:
@@ -113,6 +114,8 @@ while not done:
                 keys["d"] = True
             if event.key == K_SPACE:
                 keys[" "] = True
+            if event.key == K_q:
+                keys["q"] = True
                 
         if event.type == KEYUP:
             if event.key == K_w:
@@ -125,10 +128,12 @@ while not done:
                 keys["d"] = False
             if event.key == K_SPACE:
                 keys[" "] = False
+            if event.key == K_q:
+                keys["q"] = False
         elif event.type == pygame.USEREVENT + 1:
             seconds += 1
 
-        for Yenemy in Yenemies:     #Have no idea how to improve this
+        for Yenemy in Yenemies:     #Have no idea how to simply do it better
             if Yenemy.position[0] <= player.position[0]:
                 Yenemy.position[0] += Yspeed
             if Yenemy.position[0] >= player.position[0]:
@@ -157,18 +162,20 @@ while not done:
         player.move("DOWN", speed)
     if keys["d"]:
         player.move("RIGHT", speed)
+    if keys["q"]:
+       done = True 
     #if keys[" "]:
         #Shoot
 
     #Walls - Player
-    if player.position[1] <= -2:
-        player.position[1] += 2
+    if player.position[1] <= 2:
+        player.position[1] += speed
     if player.position[1] >= 433:
-        player.position[1] -= 2
+        player.position[1] -= speed
     if player.position[0] <= -2:
-        player.position[0] += 2
+        player.position[0] += speed
     if player.position[0] >= 690:
-        player.position[0] -= 2
+        player.position[0] -= speed
         
     for enemy in enemies:
         if enemy.position[1] <= -2:
@@ -183,11 +190,11 @@ while not done:
 
     for enemy in enemies:
         if player.iscolliding(enemy):
-                health -= damage
+                player.health -= player.damage
 
     for Yenemy in Yenemies:
         if player.iscolliding(Yenemy):
-            health -= 100
+            player.health -= 50
             
     for item in items:
         if player.iscolliding(item):
@@ -195,35 +202,33 @@ while not done:
             if name == "helmet":
                 #print("helmet picked-up")
                 player.items.append("helmet")
-                defence += 25
+                player.defence += 25
                 helmets += 1
             if name == "chestplate":
                 #print("chestplate picked-up")
-                defence += 50
+                player.defence += 50
                 chestplates += 1
             if name == "necklace":
                 #print("necklace picked-up")
-                health += 20
+                player.health += 20
                 necklaces += 1
             if name == "leggings":
                 #print("leggings picked-up")
-                defence += 35
+                player.defence += 35
                 speed += 0.25
-                Yspeed += 0.4
                 leggings += 1
             if name == "watch":
                 #print("watch picked-up")
                 watches += 1
                 player.items.append("watch")
             item.move_random()
-                
-    if health <= 0:
-        print("Game Over")
+
+    if player.health <= 0:
+        print("Game Over!")
         done = True
-        
     #Text
-    Health = myfont.render("Health: " + str(health), 50, (255, 255, 255))
-    Defence = myfont.render("Defence: " + str(defence), 50, (255, 255, 255))    
+    Health = myfont.render("Health: " + str(player.health), 50, (255, 255, 255))
+    Defence = myfont.render("Defence: " + str(player.defence), 50, (255, 255, 255))    
     Helmet = myfont.render("Helmets: " + str(helmets), 50, (255, 255, 255))
     Chestplate = myfont.render("Chestplates: " + str(chestplates), 50, (255, 255, 255))
     Necklace = myfont.render("Necklaces: " + str(necklaces), 50, (255, 255, 255))
